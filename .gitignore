@@ -19,3 +19,7 @@ yarn-error.log*
 
 # Operating system files
 .DS_Store
+
+# Ignore lock files
+package-lock.json
+yarn.lock
