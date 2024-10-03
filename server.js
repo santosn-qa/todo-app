@@ -73,6 +73,17 @@ app.delete('/api/tasks/:id', async (req, res) => {
   res.json({ message: 'Task deleted' });
 });
 
+// Clear database route
+app.delete('/api/clear-db', async (req, res) => {
+  try {
+    await Task.deleteMany({}); // Clear all tasks
+    res.status(200).json({ message: 'Database cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing database:', error);
+    res.status(500).json({ message: 'Failed to clear database' });
+  }
+});
+
 // Export app for testing
 module.exports = { app, startServer, stopServer };
 
