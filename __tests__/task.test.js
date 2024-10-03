@@ -5,11 +5,13 @@ const Task = require('../models/Task');
 
 const TASK_API_URL = '/api/tasks';
 
+// Set NODE_ENV to 'test' for this test file
+process.env.NODE_ENV = 'test';
+
 beforeAll(async () => {
     try {
         await mongoose.connect('mongodb://localhost:27017/todoDB_test');
         console.log('Connected to MongoDB');
-        startServer();
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
         process.exit(1); // Exit process on error

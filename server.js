@@ -75,3 +75,8 @@ app.delete('/api/tasks/:id', async (req, res) => {
 
 // Export app for testing
 module.exports = { app, startServer, stopServer };
+
+// Start the server when the module loads, unless in test mode
+if (process.env.NODE_ENV !== 'test') {
+  connectDB().then(startServer);
+}

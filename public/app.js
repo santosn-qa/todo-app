@@ -1,10 +1,11 @@
 const taskList = document.getElementById('task-list');
 const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
+const API_URL = 'http://localhost:3000'; // Static URL
 
 // Fetch tasks from the API
 async function fetchTasks() {
-  const response = await fetch('http://localhost:3000/api/tasks');  // Updated URL
+  const response = await fetch(`${API_URL}/api/tasks`);  // Updated URL
   const tasks = await response.json();
   tasks.forEach(addTaskToDOM);
 }
@@ -13,7 +14,7 @@ async function fetchTasks() {
 addTaskBtn.addEventListener('click', async () => {
   const title = taskInput.value;
   if (title) {
-    const response = await fetch('http://localhost:3000/api/tasks', {  // Updated URL
+    const response = await fetch(`${API_URL}/api/tasks`, {  // Updated URL
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title }),
@@ -37,7 +38,7 @@ function addTaskToDOM(task) {
 
   // Toggle task completion
   li.querySelector('input').addEventListener('click', async () => {
-    await fetch(`http://localhost:3000/api/tasks/${task._id}`, {  // Updated URL
+    await fetch(`${API_URL}/api/tasks/${task._id}`, {  // Updated URL
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ completed: !task.completed }),
@@ -47,7 +48,7 @@ function addTaskToDOM(task) {
 
   // Delete task
   li.querySelector('.delete-btn').addEventListener('click', async () => {
-    await fetch(`http://localhost:3000/api/tasks/${task._id}`, {  // Updated URL
+    await fetch(`${API_URL}/api/tasks/${task._id}`, {  // Updated URL
       method: 'DELETE',
     });
     taskList.removeChild(li);
