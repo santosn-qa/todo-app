@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const Task = require('./models/Task');
 
@@ -13,23 +14,35 @@ app.use(cors());
 // Middleware to parse JSON data
 app.use(express.json());
 
-// Connect to MongoDB (make sure MongoDB is running on your machine)
-mongoose.connect('mongodb://localhost:27017/todoDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// Connect to MongoDB
+async function connectDB() {
+  if (mongoose.connection.readyState === 0) { // 0 = disconnected
+    try {
+      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/todoDB');
+      console.log('Connected to MongoDB');
+    } catch (error) {
+      console.error('Error connecting to MongoDB:', error);
+    }
+  } else {
+    console.log('Already connected to MongoDB');
+  }
+}
 
-// Check MongoDB connection
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
+let server; // Declare a variable to store the server instance
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+const startServer = () => {
+  server = app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+};
+
+// Function to stop the server
+const stopServer = () => {
+  if (server) {
+    server.close();
+  }
+};
 
 // Get all tasks
 app.get('/api/tasks', async (req, res) => {
@@ -59,3 +72,6 @@ app.delete('/api/tasks/:id', async (req, res) => {
   await Task.findByIdAndDelete(req.params.id);
   res.json({ message: 'Task deleted' });
 });
+
+// Export app for testing
+module.exports = { app, startServer, stopServer };
